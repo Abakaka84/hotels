@@ -1,21 +1,3 @@
-import express from "express";
-import fs from "fs";
-
-const app = express();
-
-// 🔐 مفتاح الحماية
-const API_KEY = process.env.API_KEY;
-
-app.use((req, res, next) => {
-  const userKey = req.headers["x-api-key"];
-
-  if (!userKey || userKey !== API_KEY) {
-    return res.status(401).json({
-      error: "Unauthorized - Invalid API Key"
-    });
-  }
-  next();
-});
 const express = require('express');
 const fs = require('fs');
 const app = express();
