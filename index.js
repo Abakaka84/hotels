@@ -1,3 +1,6 @@
+const express = require('express');
+const fs = require('fs');
+const app = express();
 // صفحة ترحيب بدون حماية
 app.get("/", (req, res) => {
   res.send("Hotels API is running");
@@ -16,11 +19,7 @@ app.use((req, res, next) => {
 // Endpoint محمي
 app.get("/hotels", (req, res) => {
   res.json(hotels);
-});
-const express = require('express');
-const fs = require('fs');
-const app = express();
-
+})
 const PORT = process.env.PORT || 3000;
 
 // 🔐 API KEY من Render
