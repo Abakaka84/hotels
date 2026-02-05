@@ -1,3 +1,22 @@
+// صفحة ترحيب بدون حماية
+app.get("/", (req, res) => {
+  res.send("Hotels API is running");
+});
+
+// 🔐 الحماية بعد الصفحة الرئيسية
+app.use((req, res, next) => {
+  const userKey = req.headers["x-api-key"];
+
+  if (!userKey || userKey !== process.env.API_KEY) {
+    return res.status(401).json({ error: "API key missing" });
+  }
+  next();
+});
+
+// Endpoint محمي
+app.get("/hotels", (req, res) => {
+  res.json(hotels);
+});
 const express = require('express');
 const fs = require('fs');
 const app = express();
