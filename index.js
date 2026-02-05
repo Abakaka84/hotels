@@ -1,57 +1,48 @@
-const express = require("express");
+const express = require('express');
+const fs = require('fs');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const hotels = [
-  { id: 1, name: "Hilton New York", country: "USA", city: "New York", stars: 5 },
-  { id: 2, name: "Marriott Los Angeles", country: "USA", city: "Los Angeles", stars: 4 },
-  { id: 3, name: "Ritz Paris", country: "France", city: "Paris", stars: 5 },
-  { id: 4, name: "Ibis Berlin", country: "Germany", city: "Berlin", stars: 3 },
-  { id: 5, name: "Sheraton Rome", country: "Italy", city: "Rome", stars: 4 },
-  { id: 6, name: "Hilton London", country: "UK", city: "London", stars: 5 }
-];
+// 🔐 API KEY من Render
+const API_KEY = process.env.API_KEY;
 
-// Health check
-app.get("/", (req, res) => {
-  res.json({
-    status: "ok",
-    service: "Hotels API",
-    version: "v1",
-    endpoints: ["/api/v1/hotels"]
-  });
+// 🔐 حماية
+app.use((req, res, next) => {
+    const key = req.headers['x-api-key'];
+
+    if (!key) {
+        return res.status(401).json({ error: "API key missing" });
+    }
+
+    if (key !== API_KEY) {
+        return res.status(403).json({ error: "Invalid API key" });
+    }
+
+    next();
 });
 
-// API الفنادق
-app.get("/api/v1/hotels", (req, res) => {
-  const { country, city, page = 1, limit = 10 } = req.query;
+// بيانات تجريبية (Render سيعمل بدون Python)
+const hotels = [
+  { id: 1, name: "Grand Hotel", city: "Paris", stars: 5 },
+  { id: 2, name: "Blue Sky Inn", city: "New York", stars: 4 },
+  { id: 3, name: "Sunrise Hotel", city: "London", stars: 3 }
+];
 
-  let result = hotels;
+// كل الفنادق
+app.get('/hotels', (req, res) => {
+    res.json(hotels);
+});
 
-  if (country) {
-    result = result.filter(h =>
-      h.country.toLowerCase() === country.toLowerCase()
+// حسب المدينة
+app.get('/hotels/:city', (req, res) => {
+    const city = req.params.city.toLowerCase();
+    const result = hotels.filter(h =>
+        h.city.toLowerCase() === city
     );
-  }
-
-  if (city) {
-    result = result.filter(h =>
-      h.city.toLowerCase() === city.toLowerCase()
-    );
-  }
-
-  const start = (page - 1) * limit;
-  const end = start + Number(limit);
-
-  res.json({
-    success: true,
-    total: result.length,
-    page: Number(page),
-    limit: Number(limit),
-    data: result.slice(start, end)
-  });
+    res.json(result);
 });
 
 app.listen(PORT, () => {
-  console.log(`Hotels API running on port ${PORT}`);
+    console.log("API running");
 });
