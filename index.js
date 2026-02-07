@@ -10,25 +10,12 @@ const hotels = [
   { id: 3, name: "Sunrise Hotel", city: "London", stars: 3 }
 ];
 
-// صفحة رئيسية
+// الصفحة الرئيسية
 app.get("/", (req, res) => {
   res.send("Hotels API is running");
 });
 
-// كل الفنادق
-app.get("/hotels", (req, res) => {
-  res.json(hotels);
-});
-
-// حسب المدينة
-app.get("/hotels/:city", (req, res) => {
-  const city = req.params.city.toLowerCase();
-  res.json(hotels.filter(h => h.city.toLowerCase() === city));
-});
-
-app.listen(PORT, () => {
-  console.log("API running");
-});
+// ✅ الفلترة (لازم تكون قبل :city)
 app.get("/hotels/filter", (req, res) => {
   let result = hotels;
 
@@ -45,4 +32,19 @@ app.get("/hotels/filter", (req, res) => {
   }
 
   res.json(result);
+});
+
+// كل الفنادق
+app.get("/hotels", (req, res) => {
+  res.json(hotels);
+});
+
+// حسب المدينة
+app.get("/hotels/:city", (req, res) => {
+  const city = req.params.city.toLowerCase();
+  res.json(hotels.filter(h => h.city.toLowerCase() === city));
+});
+
+app.listen(PORT, () => {
+  console.log("API running");
 });
