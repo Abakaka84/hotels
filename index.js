@@ -29,3 +29,20 @@ app.get("/hotels/:city", (req, res) => {
 app.listen(PORT, () => {
   console.log("API running");
 });
+app.get("/hotels/filter", (req, res) => {
+  let result = hotels;
+
+  if (req.query.city) {
+    result = result.filter(h =>
+      h.city.toLowerCase() === req.query.city.toLowerCase()
+    );
+  }
+
+  if (req.query.stars) {
+    result = result.filter(h =>
+      h.stars == req.query.stars
+    );
+  }
+
+  res.json(result);
+});
