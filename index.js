@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const API_KEY = process.env.API_KEY;
 
 // بيانات تجريبية
 const hotels = [
@@ -11,40 +10,22 @@ const hotels = [
   { id: 3, name: "Sunrise Hotel", city: "London", stars: 3 }
 ];
 
-// ✅ صفحة رئيسية بدون حماية (لازم تفتح في المتصفح)
+// صفحة رئيسية
 app.get("/", (req, res) => {
   res.send("Hotels API is running");
 });
 
-// 🔐 حماية (بعد الصفحة الرئيسية فقط)
-app.use((req, res, next) => {
-  const key = req.headers["x-api-key"];
-
-  if (!key) {
-    return res.status(401).json({ error: "API key missing" });
-  }
-
-  if (key !== API_KEY) {
-    return res.status(403).json({ error: "Invalid API key" });
-  }
-
-  next();
-});
-
-// ✅ كل الفنادق
+// كل الفنادق
 app.get("/hotels", (req, res) => {
   res.json(hotels);
 });
 
-// ✅ حسب المدينة
+// حسب المدينة
 app.get("/hotels/:city", (req, res) => {
   const city = req.params.city.toLowerCase();
-  const result = hotels.filter(
-    h => h.city.toLowerCase() === city
-  );
-  res.json(result);
+  res.json(hotels.filter(h => h.city.toLowerCase() === city));
 });
 
 app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
+  console.log("API running");
 });
